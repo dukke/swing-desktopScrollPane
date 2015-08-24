@@ -72,6 +72,11 @@ public class DesktopScrollPane extends JScrollPane {
         setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
+    //returns contained JDesktopPane to add internal frames and 'setSelectedFrame()'
+    public JDesktopPane getDesktopPane(){
+        return desktopPane;
+    }
+    
     private void onComponentRemoved(ContainerEvent event) {
         Component removedComponent = event.getChild();
         if (removedComponent instanceof JInternalFrame)
