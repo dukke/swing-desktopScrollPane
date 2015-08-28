@@ -29,12 +29,15 @@
  */
 package Modellus.WinUI.InternalFrames;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 
 public class DesktopScrollPane extends JScrollPane {
 
@@ -59,7 +62,7 @@ public class DesktopScrollPane extends JScrollPane {
 
             @Override
             public void componentRemoved(ContainerEvent e) {
-                onComponentRemoted(e);
+                onComponentRemoved(e);
             }
         });
         setViewportView(desktopPane);
@@ -69,10 +72,16 @@ public class DesktopScrollPane extends JScrollPane {
         setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
-    private void onComponentRemoted(ContainerEvent event) {
+    //returns contained JDesktopPane to add internal frames and 'setSelectedFrame()'
+    public JDesktopPane getDesktopPane(){
+        return desktopPane;
+    }
+    
+    private void onComponentRemoved(ContainerEvent event) {
         Component removedComponent = event.getChild();
         if (removedComponent instanceof JInternalFrame)
-            removedComponent.removeComponentListener(componentListener);
+            
+            ((JInternalFrame)removedComponent).removeInternalFrameListener(componentListener);
 
     }
 
@@ -80,7 +89,8 @@ public class DesktopScrollPane extends JScrollPane {
         Component addedComponent = event.getChild();
         if (addedComponent instanceof JInternalFrame)
         {
-            addedComponent.addComponentListener(componentListener);
+            
+            ((JInternalFrame)addedComponent).addInternalFrameListener(componentListener);
             resizeDesktop();
         }
     }
@@ -185,25 +195,42 @@ public class DesktopScrollPane extends JScrollPane {
         });
     }
 
-  private class InternalFrameComponentListener implements ComponentListener
-  {
+    
+    private class InternalFrameComponentListener implements InternalFrameListener {
 
-      @Override
-      public void componentResized(ComponentEvent e) {
-          resizeDesktop();
-      }
+        @Override
+        public void internalFrameOpened(InternalFrameEvent e) {
+        }
 
-      @Override
-      public void componentMoved(ComponentEvent e) {
-          resizeDesktop();
-      }
+        @Override
+        public void internalFrameClosing(InternalFrameEvent e) {
+            resizeDesktop();
+        }
 
-      @Override
-      public void componentShown(ComponentEvent e) {
-      }
+        @Override
+        public void internalFrameClosed(InternalFrameEvent e) {
+            resizeDesktop();
+        }
 
-      @Override
-      public void componentHidden(ComponentEvent e) {
-      }
-  }
+        @Override
+        public void internalFrameIconified(InternalFrameEvent e) {
+            resizeDesktop();
+        }
+
+        @Override
+        public void internalFrameDeiconified(InternalFrameEvent e) {
+            resizeDesktop();
+        }
+
+        @Override
+        public void internalFrameActivated(InternalFrameEvent e) {
+
+        }
+
+        @Override
+        public void internalFrameDeactivated(InternalFrameEvent e) {
+
+        }
+        
+    }
 }
